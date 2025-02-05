@@ -14,3 +14,13 @@ body{
         height: 90vh;
     }
 }
+
+#site-name:hover{
+    cursor: pointer;
+}
+
+.season:hover, .episode:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+

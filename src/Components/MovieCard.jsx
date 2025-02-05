@@ -7,9 +7,9 @@ const MovieCard = ({image, title, descritpion, id}) => {
 
     return <>
         <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src={"https://image.tmdb.org/t/p/original"+image} />
+            <Card.Img variant="top" src={"https://image.tmdb.org/t/p/original"+image} height={400}/>
             <Card.Body>
-                <Card.Title>{title}</Card.Title>
+                <Card.Title >{title}</Card.Title>
                 <Card.Text style={{ height: "100px", overflow: "hidden"}}>
                     {descritpion}
                 </Card.Text>

@@ -7,13 +7,14 @@ const NavBar = () => {
 
     return <>
      <Navbar expand="lg" bg='dark' variant='dark' className='p-3'>
-        <Navbar.Brand onClick={() => {navigate("/")}}>ForEach Ciné</Navbar.Brand>
+        <Navbar.Brand onClick={() => {navigate("/")}} id='site-name'>ForEach Ciné</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Link to='/' className='nav-link'>Home</Link>
             <Link to='/movies' className='nav-link'>Movies</Link>   
             <Link to='/peoples' className='nav-link'>People</Link>   
+            <Link to='/series' className='nav-link'>Series</Link>   
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">

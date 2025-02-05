@@ -1,10 +1,34 @@
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+import Carousel from "react-multi-carousel";
 import { useParams } from "react-router-dom";
+import PeopleCard from "../Components/PeopleCard";
+import MovieCard from "../Components/MovieCard";
 
-const MoviePage = () => {
+const MoviePage = (props) => {
     const { name } = useParams();
     const [movie, setMovie] = useState({});
+    const [credits, setCredits] = useState({});
+    const [similarMovies, setSimilarMovies] = useState([]);
+    const responsive = {
+        superLargeDesktop: {
+            // the naming can be any, depends on you.
+            breakpoint: { max: 4000, min: 3000 },
+            items: 5
+        },
+        desktop: {
+            breakpoint: { max: 3000, min: 1024 },
+            items: 3
+        },
+        tablet: {
+            breakpoint: { max: 1024, min: 464 },
+            items: 2
+        },
+        mobile: {
+            breakpoint: { max: 464, min: 0 },
+            items: 1
+        }
+    };
 
     const fetchMovieById = () => { 
         fetch("https://api.themoviedb.org/3/movie/"+name+"?language=fr", {
@@ -15,8 +39,38 @@ const MoviePage = () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             setMovie(data);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    const fetchCreditsByMovieId = () => {
+        fetch("https://api.themoviedb.org/3/movie/"+name+"/credits?language=fr", {
+            method: "GET",
+            headers: {
+                Authorization : "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NDczNTRkNzZiZTM2NTcxODY4NDcyZGZhZWUyN2Q4NyIsIm5iZiI6MTY0Njk4ODUwNS4xMjgsInN1YiI6IjYyMmIwY2Q5ZDY4MTliMDAxYjVhMjUwNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yag79kgVwxdazfAOqQIOXnt1G7xh8MUbSf5EARMpv9Q"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setCredits(data);
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    const fetchSimilarMovies = () => {
+        fetch("https://api.themoviedb.org/3/movie/"+name+"/similar?language=fr", {
+            method: "GET",
+            headers: {
+                Authorization : "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NDczNTRkNzZiZTM2NTcxODY4NDcyZGZhZWUyN2Q4NyIsIm5iZiI6MTY0Njk4ODUwNS4xMjgsInN1YiI6IjYyMmIwY2Q5ZDY4MTliMDAxYjVhMjUwNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yag79kgVwxdazfAOqQIOXnt1G7xh8MUbSf5EARMpv9Q"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  
+            setSimilarMovies(data.results);
         }).catch(error => {
             console.error(error);
         });
@@ -25,6 +79,8 @@ const MoviePage = () => {
 
     useEffect(() => {
         fetchMovieById();
+        fetchCreditsByMovieId();
+        fetchSimilarMovies();
     }, []);
 
 
@@ -71,6 +127,84 @@ const MoviePage = () => {
                 </div>
             </div>
         </div>
+        <h2 className="text-center mt-5 mb-5" style={{ fontSize: "4rem", color: "white" }}>Équipe</h2>
+        {credits.crew && <Carousel
+            // className='mt-auto mb-auto w-90vh'
+            swipeable={true}
+            draggable={false}
+            showDots={false}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            infinite={true}
+            autoPlay={props.deviceType !== "mobile" ? true : false}
+            autoPlaySpeed={2500}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={[]}
+            deviceType={props.deviceType}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+        >
+            {credits.crew.map((star, index) =>  {
+                return <div key={index} className="d-flex flex-column align-items-center gap-3">
+                   <PeopleCard key={index} id={star.id} name={star.name} profile_path={star.profile_path}/>
+                </div>
+            })}
+        </Carousel>}
+        <h2 className="text-center mt-5 mb-5" style={{ fontSize: "4rem", color: "white" }}>Acteurs</h2>
+        {credits.cast && <Carousel
+            // className='mt-auto mb-auto w-90vh'
+            swipeable={true}
+            draggable={false}
+            showDots={false}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            infinite={true}
+            autoPlay={props.deviceType !== "mobile" ? true : false}
+            autoPlaySpeed={2500}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={[]}
+            deviceType={props.deviceType}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+        >
+            {credits.cast.map((star, index) =>  {
+                return <div key={index} className="d-flex flex-column align-items-center gap-3">
+                    <PeopleCard key={index} id={star.id} name={star.name} profile_path={star.profile_path}/>
+                </div>
+            })}
+        </Carousel>}
+        <h2 className="text-center mt-5 mb-5" style={{ fontSize: "4rem", color: "white" }}>Fims similaires</h2>
+        {similarMovies && <Carousel
+            // className='mt-auto mb-auto w-90vh'
+            swipeable={true}
+            draggable={false}
+            showDots={false}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            infinite={true}
+            autoPlay={props.deviceType !== "mobile" ? true : false}
+            autoPlaySpeed={2500}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={[]}
+            deviceType={props.deviceType}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+        >
+            {similarMovies.map((movie, index) =>  {
+                return <div key={index} className="d-flex flex-column align-items-center gap-3">
+                    <MovieCard  id={movie.id} descritpion={movie.overview} image={movie.poster_path} title={movie.title} />
+                </div>
+            })}
+        </Carousel>}
     </>;
 }
  

@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import MovieCard from './MovieCard';
 
 const CarouselMovies = (props) => {
+    const [movies, setMovies] = useState([]);
     const responsive = {
         superLargeDesktop: {
             // the naming can be any, depends on you.
@@ -22,6 +25,21 @@ const CarouselMovies = (props) => {
         }
     };
 
+    const fetchMoviesTopRated = () => {
+        fetch("https://api.themoviedb.org/3/movie/top_rated?language=fr", {
+            method: "GET",
+            headers: {
+                Authorization : "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NDczNTRkNzZiZTM2NTcxODY4NDcyZGZhZWUyN2Q4NyIsIm5iZiI6MTY0Njk4ODUwNS4xMjgsInN1YiI6IjYyMmIwY2Q5ZDY4MTliMDAxYjVhMjUwNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Yag79kgVwxdazfAOqQIOXnt1G7xh8MUbSf5EARMpv9Q"
+            }
+        })
+        .then(response => response.json())
+        .then(data => setMovies(data.results))
+        .catch(error => console.log(error))
+    }
+
+    useEffect(() => {
+        fetchMoviesTopRated();
+    }, []); 
     
     return <>
         <Carousel
@@ -43,22 +61,12 @@ const CarouselMovies = (props) => {
             dotListClass="custom-dot-list-style"
             itemClass="carousel-item-padding-40-px"
         >
-            <div className='d-flex flex-column align-items-center gap-3'>
-                <img src="https://fr.web.img2.acsta.net/img/f5/f2/f5f2447c4246e42eb3e69040605d7cf1.jpg" alt="Mufasa" width={350} height={500} />
-                <h2 style={{color : "white", fontWeight : "bold", textTransform: "uppercase"}}>Mufasa</h2>
-            </div>
-            <div className='d-flex flex-column align-items-center gap-3'>
-                <img src="https://lumiere-a.akamaihd.net/v1/images/image_9e35a739.jpeg?region=0%2C0%2C540%2C810&width=320" alt="Mufasa" width={350} height={500} />
-                <h2 style={{color : "white", fontWeight : "bold", textTransform: "uppercase"}}>Aladin</h2>
-            </div>
-            <div className='d-flex flex-column align-items-center gap-3'>
-                <img src="https://fr.web.img3.acsta.net/c_310_420/img/6d/d2/6dd27c0509edb48b13cc65d51915a1fe.jpg" alt="Mufasa" width={350} height={500} />
-                <h2 style={{color : "white", fontWeight : "bold", textTransform: "uppercase"}}>Mercato</h2>
-            </div>
-            <div className='d-flex flex-column align-items-center gap-3'>
-                <img src="https://lumiere-a.akamaihd.net/v1/images/image_4bf3cdf7.jpeg?region=0%2C0%2C540%2C810&width=320" alt="Mufasa" width={350} height={500} />
-                <h2 style={{color : "white", fontWeight : "bold", textTransform: "uppercase"}}>Blanche neige </h2>
-            </div>
+           {movies.map((movie, index) => {
+                return <div key={index} className='d-flex flex-column justify-content-center align-items-center'>
+                    <MovieCard id={movie.id}  descritpion={movie.overview} image={movie.poster_path} title={movie.title}/>
+                </div> 
+
+           })}
         </Carousel>
     </>;
 }
